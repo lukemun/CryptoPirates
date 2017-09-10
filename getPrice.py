@@ -34,7 +34,7 @@ def analyze(prices):
 	print (prices[last])
 
 	if abs(prices[last]['USD'] - prices[last-1]['USD'])/prices[last]['USD'] > 0.003:
-		n.send_mail("%f -> %f" % (prices[last-1]['USD'], prices[last]['USD']), "alexmatthys@gmail.com")
+		n.send_mail("%f -> %f" % (prices[last-1]['USD'], prices[last]['USD']), ["alexmatthys@gmail.com", "lucasmunro0402@gmail.com"])
 		print ("sent mail")
 
 
