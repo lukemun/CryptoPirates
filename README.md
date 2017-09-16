@@ -2,8 +2,8 @@
 we crypto, we pirates
 
 useful apis:
-block.io
-shapeshift.io
+- block.io
+- shapeshift.io
 
 ## TODO
 - [ ] Live feed of crypto currency prices (general)
