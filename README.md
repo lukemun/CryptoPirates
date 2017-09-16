@@ -2,10 +2,11 @@
 we crypto, we pirates
 
 useful apis:
-- block.io
-- shapeshift.io
+- block.io (only for bitcoin, dogecoin, and litecoin)
+- shapeshift.io (exchanging between crypt currencies)
 
 ## TODO
+- [ ] Find more apis to get current prices
 - [ ] Live feed of crypto currency prices (general)
 - [ ] Live feed of crypto currency prices on different exchanges
 - [ ] Mock buy and sell algorithm
