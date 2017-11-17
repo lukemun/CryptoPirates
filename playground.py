@@ -10,6 +10,7 @@ def loadConfigs(filename='config.json'):
 	return configs	
 
 
+
 configs = loadConfigs()
 
 polo = poloniex.Poloniex(configs['poloniex']['key'], configs['poloniex']['secret'], coach=True)
