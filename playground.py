@@ -15,7 +15,7 @@ configs = loadConfigs()
 
 polo = poloniex.Poloniex(configs['poloniex']['key'], configs['poloniex']['secret'], coach=True)
 
-hist_5_mins = polo.returnChartData('USDT_BTC', 300, 1510290000, 1510462800)
+hist_5_mins = polo.returnChartData('USDT_BTC', 300, 1510290000, 1510894800)
 
 df = pd.DataFrame(hist_5_mins)
 
@@ -23,8 +23,8 @@ print(df.iloc[0])
 print(df.iloc[-1])
 print(len(hist_5_mins))
 
-# with open('btc_5mins.csv', 'w') as f:
-# 	df.to_csv(f)
+with open('btc_5mins_1week_window.csv', 'w') as f:
+	df.to_csv(f)
 
 # with open('btc_5mins.csv', 'r') as f:
 # 	df2 = pd.read_csv(f)

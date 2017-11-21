@@ -14,9 +14,6 @@ def test_algorithm(filename, initialCapital):
 	# Short moving average, keeps track of last 5 data points
 	sma_data = deque()
 	sma = 0
-	# Medium moving average, keeps track of last 15 data points
-	mma_data = deque()
-	mma = 0
 	# Large moving average, keeps track of last 30 data points
 	lma_data = deque()
 	lma = 0
@@ -25,25 +22,59 @@ def test_algorithm(filename, initialCapital):
 	for indx,val in enumerate(btc_data[0:30]):
 		if indx > 24:
 			sma_data.append(val)
-			mma_data.append(val)
-			lma_data.append(val)
-		elif indx > 14:
-			mma_data.append(val)
 			lma_data.append(val)
 		else:
 			lma_data.append(val)
 	sma = np.mean(sma_data)
-	mma = np.mean(mma_data)
 	lma = np.mean(lma_data)
+
+	# Investing strategy: if sma > lma, buy in with 75% of assets. If sma < lma, sell all.
+	cash = initialCapital
+	capitalInvested = 0
+	invested = False
+	price_invested_at = 0
 
 	# Now, iterate through remaining data points, generating buy and sell signals
 	for val in btc_data[30:]:
-		pass
+		print("Net worth: " + str(cash + capitalInvested))
+		# Update short moving average
+		sma_data.popleft()
+		sma_data.append(val)
+		sma = np.mean(sma_data)
+		# Update large moving average
+		lma_data.popleft()
+		lma_data.append(val)
+		lma = np.mean(lma_data)
+
+		# Now decide whether to buy, sell, or simply hold
+		if sma > lma and not invested:
+			print("Execute Buy Order")
+			# Execute a buy order, investing 75% of cash into bitcoin
+			# ASSUMPTIONS: immediate transaction speed, ignoring any transaction fees or spreads 
+			capitalInvested = cash * 0.75
+			cash *= 0.25
+			invested = True
+			price_invested_at = val
+		elif sma < lma and invested:
+			print("Execute Sell Order")
+			# Execute a sell order, selling all bitcoin assets
+			# ASSUMPTIONS: immediate transaction speed, ignoring any transaction fees or spreads
+			gain_loss = (val - price_invested_at) / price_invested_at
+			bitcoin_worth = gain_loss * capitalInvested + capitalInvested
+			cash += bitcoin_worth
+			capitalInvested = 0
+			invested = False
+			price_invested_at = 0
+
+	net_worth_hold_bitcoin_instead = ((btc_data[-1] - btc_data[0]) / btc_data[0]) * initialCapital + initialCapital
+	print("Net Worth had we just invested all assets in bitcoin: " + str(net_worth_hold_bitcoin_instead))
 
 
 
 
-test_algorithm('btc_5mins.csv', 1000)
+
+
+test_algorithm('btc_5mins_1week_window.csv', 1000)
 
 
 
