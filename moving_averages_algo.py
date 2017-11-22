@@ -11,16 +11,18 @@ def test_algorithm(filename, initialCapital):
 	closing_prices = df.iloc[:,1]
 	btc_data = closing_prices.as_matrix()
 	
-	# Short moving average, keeps track of last 5 data points
+	# Short moving average, keeps track of last sma_length data points
+	sma_length = 15
 	sma_data = deque()
 	sma = 0
-	# Large moving average, keeps track of last 30 data points
+	# Large moving average, keeps track of last lma_length data points
+	lma_length = 50
 	lma_data = deque()
 	lma = 0
 
 	# Fill deques with starting data
-	for indx,val in enumerate(btc_data[0:30]):
-		if indx > 24:
+	for indx,val in enumerate(btc_data[0:lma_length]):
+		if indx > lma_length - sma_length - 1:
 			sma_data.append(val)
 			lma_data.append(val)
 		else:
@@ -35,7 +37,7 @@ def test_algorithm(filename, initialCapital):
 	price_invested_at = 0
 
 	# Now, iterate through remaining data points, generating buy and sell signals
-	for val in btc_data[30:]:
+	for val in btc_data[lma_length:]:
 		print("Net worth: " + str(cash + capitalInvested))
 		# Update short moving average
 		sma_data.popleft()
@@ -66,15 +68,14 @@ def test_algorithm(filename, initialCapital):
 			invested = False
 			price_invested_at = 0
 
+	# Analyze how much money we would have had we simply invested all our capital in bitcoin and then just held
 	net_worth_hold_bitcoin_instead = ((btc_data[-1] - btc_data[0]) / btc_data[0]) * initialCapital + initialCapital
 	print("Net Worth had we just invested all assets in bitcoin: " + str(net_worth_hold_bitcoin_instead))
 
 
 
 
-
-
-test_algorithm('btc_5mins_1week_window.csv', 1000)
+test_algorithm('btc_5mins_1month_window.csv', 1000)
 
 
 
