@@ -17,16 +17,17 @@ class anal_object(object):
 
 	def setup(self):
 		crypto_json = self.polo.returnChartData(self.currency, self.period)
-		crypto_data = json_to_df(crypto_json)
-		max_len = int(24*60*60/self.period)
+		crypto_data = pd.DataFrame(crypto_json)
+		max_len = int((24*60*60)/self.period)
 		self.deq = deque((row for index, row in crypto_data.iterrows()), 
 															maxlen=max_len)
 		
 	
 	def update(self):
 		crypto_json = self.polo.returnChartData(self.currency, self.period)
-		new_crypto_data = json_to_df(crypto_json)
-		if new_crypto_data.iloc[0]["date"] == self.deq[0]["date"]:
+		new_crypto_data = pd.DataFrame(crypto_json)
+		if new_crypto_data.iloc[len(new_crypto_data)-1]["date"] == self.deq[len(deq)-1]["date"]:
+			# push_back?
 			self.deq.append(new_crypto_data.iloc[0])
 			return True
 		return False
@@ -44,9 +45,3 @@ class anal_object(object):
 			return analysis_func(*args)
 		return analysis_func()
 
-
-def json_to_df(json):
-	dat = pd.DataFrame(json)
-	# flip, reset index, drop extra row
-	df = dat.iloc[::-1].reset_index().drop("index", axis=1)
-	return df
