@@ -24,14 +24,17 @@ class SimRig():
 		self.crypto_hist_index = len(self.deq)
 
 
-	def analyzeWith(self, analysis_func, args=False):
+	def analyzeWith(self, analysis_func, args=False, alpha=0.8):
 		momentum = [0]*(self.crypto_hist_index)
+		old_moment = 0
 		while (self.crypto_hist_index != len(self.crypto_hist-1)):
 			if (args):
 				moment = analysis_func(self.deq, *args)
 			else:
 				moment = analysis_func(self.deq)
+			moment += alpha * old_moment
 			momentum.append(moment)
+			old_moment = moment
 			self.deq.append(self.crypto_hist.iloc[self.crypto_hist_index])
 			self.crypto_hist_index += 1
 		self.crypto_hist['momentum'] = momentum
