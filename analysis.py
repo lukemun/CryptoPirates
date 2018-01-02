@@ -3,12 +3,13 @@ import utils
 import poloniex
 from collections import deque
 
-class anal_object(object):
+class Analysis(object):
 	"""analysis object! stores and processes crypto data
 		for the last 24 hours."""
 
-	def __init__(self, currency, period, configs):
+	def __init__(self, currency, period, hist_length, configs):
 		self.period = period
+		self.hist_length = hist_length
 		self.currency = currency
 		self.deq = None
 		self.polo = poloniex.Poloniex(configs['poloniex']['key'],
@@ -18,16 +19,14 @@ class anal_object(object):
 	def setup(self):
 		crypto_json = self.polo.returnChartData(self.currency, self.period)
 		crypto_data = pd.DataFrame(crypto_json)
-		max_len = int((24*60*60)/self.period)
 		self.deq = deque((row for index, row in crypto_data.iterrows()), 
-															maxlen=max_len)
+															maxlen=self.hist_length)
 		
 	
 	def update(self):
 		crypto_json = self.polo.returnChartData(self.currency, self.period)
 		new_crypto_data = pd.DataFrame(crypto_json)
 		if new_crypto_data.iloc[len(new_crypto_data)-1]["date"] == self.deq[len(deq)-1]["date"]:
-			# push_back?
 			self.deq.append(new_crypto_data.iloc[0])
 			return True
 		return False

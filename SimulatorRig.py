@@ -6,8 +6,9 @@ from collections import deque
 
 class SimRig():
 
-	def __init__(self, currency, period, configs):
+	def __init__(self, currency, period, hist_length, configs):
 		self.period = period
+		self.hist_length = hist_length
 		self.currency = currency
 		self.deq = None
 		self.crypto_hist = None
@@ -18,9 +19,8 @@ class SimRig():
 	def setup(self, data_file):
 		with open(data_file, 'r') as f:
 			self.crypto_hist = pd.read_json(f.read())
-		# just 24 hours
-		max_len = int((24*60*60)/self.period)
-		self.deq = deque((row for index, row in self.crypto_hist[:max_len].iterrows()), maxlen=max_len)
+		self.deq = deque((row for index, row in self.crypto_hist[:self.hist_length].iterrows()), 
+																		maxlen=self.hist_length)
 		self.crypto_hist_index = len(self.deq)
 
 
@@ -47,17 +47,6 @@ class SimRig():
 			moment = analysis_func(self.deq)
 		return moment
 
-	def analyzeOn(self, analysis_func, args=False):
-		momentum = [0]*(self.crypto_hist_index)
-		while (self.crypto_hist_index != len(self.crypto_hist-1)):
-			if (args):
-				moment = analysis_func(self.deq, *args)
-			else:
-				moment = analysis_func(self.deq)
-			momentum.append(moment)
-			self.deq.append(self.crypto_hist.iloc[self.crypto_hist_index])
-			self.crypto_hist_index += 1
-		self.crypto_hist['momentum2'] = momentum
 
 	def reset(self):
 		# just 24 hours
