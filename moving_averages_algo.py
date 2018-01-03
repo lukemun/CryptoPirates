@@ -2,14 +2,15 @@ import numpy as np
 import pandas as pd 
 from collections import deque
 import matplotlib.pyplot as plt
-
+import sys
 
 
 def test_algorithm(filename, initialCapital):
 	with open(filename, 'r') as f:
 		df = pd.read_csv(f)
 		# Play with this value to change the window with which this algorithm is run on
-		df = df.iloc[:7500,:]
+		df = df.iloc[5000:20000,:]
+
 
 	closing_prices = df.iloc[:,1]
 	unix_timestamps = df.iloc[:,2].as_matrix()
@@ -44,6 +45,8 @@ def test_algorithm(filename, initialCapital):
 	sma_history = np.array([])
 	lma_history = np.array([])
 
+	num_of_buys = 0
+	num_of_sells = 0
 	# Now, iterate through remaining data points, generating buy and sell signals
 	for val in btc_data[lma_length:]:
 		# Calculate what our net worth is
@@ -66,16 +69,28 @@ def test_algorithm(filename, initialCapital):
 		lma_history = np.append(lma_history, lma)
 
 		# Now decide whether to buy, sell, or simply hold
-		if sma > lma and not invested:
-			print("Execute Buy Order")
+		# if sma > lma and not invested:
+		# Run line below to only buy if sma is 1% greater than lma
+		if (sma - lma) / lma > 0.01 and not invested:
+			num_of_buys += 1
+			# print("Execute Buy Order")
+			# print("Price is " + str(val))
+			# print("sma is " + str(sma), "lma is " + str(lma))
+			# print("Current Net Worth: " + str(current_net_worth))
 			# Execute a buy order, investing 75% of cash into bitcoin
 			# ASSUMPTIONS: immediate transaction speed, ignoring any transaction fees or spreads 
-			capitalInvested = cash * 0.75
-			cash *= 0.25
+			capitalInvested = cash * 1.0
+			cash *= 0.0
 			invested = True
 			price_invested_at = val
-		elif sma < lma and invested:
-			print("Execute Sell Order")
+		# elif sma < lma and invested:
+		# Run line below to only sell if sma is 1% less than lma
+		elif (sma - lma) / lma < -0.01 and invested:
+			num_of_sells += 1
+			# print("Execute Sell Order")
+			# print("Price is " + str(val))
+			# print("sma is " + str(sma), "lma is " + str(lma))
+			# print("Current Net Worth: " + str(current_net_worth))
 			# Execute a sell order, selling all bitcoin assets
 			# ASSUMPTIONS: immediate transaction speed, ignoring any transaction fees or spreads
 			gain_loss = (val - price_invested_at) / price_invested_at
@@ -89,6 +104,8 @@ def test_algorithm(filename, initialCapital):
 	net_worth_hold_bitcoin_instead = ((btc_data[-1] - btc_data[0]) / btc_data[0]) * initialCapital + initialCapital
 	print("Net Worth had we just invested all assets in bitcoin: " + str(net_worth_hold_bitcoin_instead))
 
+	print "# Buys: " + str(num_of_buys)
+	print "# Sells: " + str(num_of_sells)
 
 	# Plot the bitcoin prices, the sma values, and the lma values
 	plt.figure()
@@ -104,7 +121,7 @@ def test_algorithm(filename, initialCapital):
 
 
 
-test_algorithm('btc_5mins_1month_window.csv', 1000)
+test_algorithm('btc_5mins_allof2017.csv', 1000)
 
 
 

@@ -4,6 +4,7 @@ import utils
 import time
 import analysis
 import transactor
+import numpy as np
 
 def main():
 
@@ -29,3 +30,38 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
+
+def moving_avgs(d):
+	"""
+
+	Takes in a deque of 500 data points
+	Returns either Buy, Sell, or Hold
+
+	"""
+	deque_length = len(d)
+	lma = np.mean(d)
+	sma_start = 4 * deque_length / 5
+	sma = np.mean(list(d)[sma_start:])
+
+	if (sma - lma) / lma > 0.01:
+		return "BUY"
+	elif (sma - lma) / lma < -0.01:
+		return "SELL"
+	else:
+		return "HOLD"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
