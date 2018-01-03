@@ -5,7 +5,6 @@ import time
 import analysis
 import transactor
 import numpy as np
-from algs import moving_avgs
 
 def main():
 
