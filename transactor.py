@@ -21,19 +21,19 @@ class TransactorThread(threading.Thread):
 		""" Initiated with start()"""
 		while not self.stoprequest.isSet():
 			try:
-				print ("waiting")
+				utils.write("waiting")
 				action = self.trans_q.get(True)
-				print ("obtained value")
+				utils.write("obtained value")
 				if (action == 1 and not self.holding):
-					print ("buying")
-					print (self.buy())
+					utils.write("buying")
+					utils.write(self.buy())
 				elif (action == -1 and self.holding):
-					print ("selling")
-					print (self.sell())
+					utils.write("selling")
+					utils.write(self.sell())
 				else:
-					print ('No action')
+					utils.write('No action')
 			except queue.Empty:
-				print ("empty")
+				utils.write("empty")
 				continue
 
 

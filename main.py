@@ -21,9 +21,9 @@ def main():
 
 	while True:
 		if (analyzer.update()):
-			print ('updated')
+			utils.write('updated')
 			val = analyzer.analyze()
-			print (val) 
+			utils.write(val) 
 			trans_que.put(val)
 		time.sleep(60)
 

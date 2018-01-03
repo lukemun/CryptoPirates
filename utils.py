@@ -22,3 +22,7 @@ def send_mail(msg):
 	server.login("tifmrp1324ip@gmail.com", "wussgood$$$")
 	server.sendmail("tifmrp1324ip@gmail.com", "6504006400@vtext.com", msg)
 	server.quit() 
+
+def write(msg):
+	with open('log.txt', 'w') as outfile:
+		outfile.write(msg)
