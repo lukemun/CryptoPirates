@@ -14,3 +14,11 @@ def json_to_df(json):
 	# flip, reset index, drop extra row
 	df = dat.iloc[::-1].reset_index().drop("index", axis=1)
 	return df
+
+
+def send_mail(msg):
+	server = smtplib.SMTP('smtp.gmail.com', 587)
+	server.starttls()
+	server.login("tifmrp1324ip@gmail.com", "wussgood$$$")
+	server.sendmail("tifmrp1324ip@gmail.com", "6504006400@vtext.com", msg)
+	server.quit() 

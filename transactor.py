@@ -2,31 +2,36 @@ import threading
 import queue
 import poloniex
 import pandas as pd
+import utils
 
 class TransactorThread(threading.Thread):
 	"""TransactorThread, polls queue for actions.
 		Then interacts with poloniex api to buy/sell"""
 
-	def __init__(self, currency, trans_q, configs):
+	def __init__(self, currency, trans_q, holding, configs):
 		super().__init__()
 		self.currency = currency
 		self.trans_q = trans_q
 		self.stoprequest = threading.Event()
 		self.polo = poloniex.Poloniex(configs['poloniex']['key'],
 						 configs['poloniex']['secret'], coach=True)
-
+		self.holding = holding
 
 	def run(self):
 		""" Initiated with start()"""
 		while not self.stoprequest.isSet():
 			try:
-				print ("trying")
+				print ("waiting")
 				action = self.trans_q.get(True)
-				if (action == "buy"):
-					print ("here")
-					self.buy()
-				elif (action == "sell"):
-					self.sell()
+				print ("obtained value")
+				if (action == 1 and not self.holding):
+					print ("buying")
+					print (self.buy())
+				elif (action == -1 and self.holding):
+					print ("selling")
+					print (self.sell())
+				else:
+					print ('No action')
 			except queue.Empty:
 				print ("empty")
 				continue
@@ -44,7 +49,9 @@ class TransactorThread(threading.Thread):
 	    btc_price = getWeightedAvg(asks)
 	    # calc volume of btc we can buy with current usdt
 	    volume = wallet["USDT"]["btcValue"]
-	    return self.polo.buy("USDT_BTC", btc_price, volume)
+	    ret_val = self.polo.buy("USDT_BTC", btc_price, volume)
+	    self.holding = True
+	    return ret_val
 
 	# limit taker sell
 	def sell(self, strength=None):
@@ -54,7 +61,9 @@ class TransactorThread(threading.Thread):
 	    btc_price = getWeightedAvg(bids)
 	    # no need to calc volume since out btc is volume
 	    volume = wallet["BTC"]["btcValue"]
-	    return self.polo.sell("USDT_BTC", btc_price, volume)
+	    ret_val = self.polo.sell("USDT_BTC", btc_price, volume)
+	    self.holding = False
+	    return ret_val
 
 	def join(self, timeout=None):
 		self.stoprequest.set()
