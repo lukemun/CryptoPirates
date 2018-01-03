@@ -1,7 +1,7 @@
 import poloniex
 import json
 import threading
-
+import smtplib
 
 def loadConfigs(filename='config.json'):
 	with open(filename, 'r') as f:
@@ -21,8 +21,9 @@ def send_mail(msg):
 	server.starttls()
 	server.login("tifmrp1324ip@gmail.com", "wussgood$$$")
 	server.sendmail("tifmrp1324ip@gmail.com", "6504006400@vtext.com", msg)
+	server.sendmail("tifmrp1324ip@gmail.com", "alexmatthys@gmail.com", msg)
 	server.quit() 
 
 def write(msg):
-	with open('log.txt', 'w') as outfile:
-		outfile.write(msg)
+	with open('log.txt', 'a+') as outfile:
+		outfile.write(str(msg)+"\n")
