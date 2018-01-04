@@ -22,7 +22,6 @@ class TransactorThread(threading.Thread):
 		""" Initiated with start()"""
 		while not self.stoprequest.isSet():
 			try:
-				# utils.write("waiting")
 				action = self.trans_q.get(True)
 				utils.write("obtained value")
 				if (action == 1 and not self.holding):

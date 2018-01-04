@@ -18,12 +18,12 @@ def main():
 	trans = transactor.TransactorThread("USDT_BTC", trans_que, True, configs)
 
 	trans.start()
-
+	utils.sendMsg("trader started")
+	utils.write("trader started")
 	while True:
 		if (analyzer.update()):
-			utils.write('updated')
 			val = analyzer.analyze()
-			utils.write(val) 
+			utils.write("updated " + str(val)) 
 			trans_que.put(val)
 		time.sleep(60)
 
