@@ -15,7 +15,7 @@ def main():
 
 	trans_que = queue.Queue()
 
-	trans = transactor.TransactorThread("USDT_BTC", trans_que, True,configs)
+	trans = transactor.TransactorThread("USDT_BTC", trans_que, True, configs)
 
 	trans.start()
 

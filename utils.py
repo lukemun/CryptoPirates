@@ -9,14 +9,14 @@ def loadConfigs(filename='config.json'):
 	return configs	
 
 
-def json_to_df(json):
+def jsonToDf(json):
 	dat = pd.DataFrame(json)
 	# flip, reset index, drop extra row
 	df = dat.iloc[::-1].reset_index().drop("index", axis=1)
 	return df
 
 
-def send_mail(msg):
+def sendMsg(msg):
 	server = smtplib.SMTP('smtp.gmail.com', 587)
 	server.starttls()
 	server.login("tifmrp1324ip@gmail.com", "wussgood$$$")

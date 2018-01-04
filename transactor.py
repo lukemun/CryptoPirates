@@ -21,14 +21,16 @@ class TransactorThread(threading.Thread):
 		""" Initiated with start()"""
 		while not self.stoprequest.isSet():
 			try:
-				utils.write("waiting")
+				# utils.write("waiting")
 				action = self.trans_q.get(True)
 				utils.write("obtained value")
 				if (action == 1 and not self.holding):
 					utils.write("buying")
+					utils.sendMsg("buying")
 					utils.write(self.buy())
 				elif (action == -1 and self.holding):
 					utils.write("selling")
+					utils.sendMsg("selling")
 					utils.write(self.sell())
 				else:
 					utils.write('No action')
@@ -48,7 +50,8 @@ class TransactorThread(threading.Thread):
 	    asks = pd.DataFrame(orders["asks"], columns=["price", "volume"]).astype(float)
 	    btc_price = getWeightedAvg(asks)
 	    # calc volume of btc we can buy with current usdt
-	    volume = wallet["USDT"]["btcValue"]
+	    # sell less so we are gauranteed enough balance
+	    volume = wallet["USDT"]["btcValue"] * 0.95
 	    ret_val = self.polo.buy("USDT_BTC", btc_price, volume)
 	    self.holding = True
 	    return ret_val

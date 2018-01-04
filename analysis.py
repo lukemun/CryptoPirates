@@ -1,7 +1,6 @@
 import pandas as pd
 import utils
 import poloniex
-import algs
 from collections import deque
 import numpy as np
 
