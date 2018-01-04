@@ -34,7 +34,8 @@ class Analysis(object):
 
 
 	def analyze(self):
-		return moving_avgs(self.deq)
+		return int(input())		
+#return moving_avgs(self.deq)
 
 	def getDeq(self):
 		return self.deq

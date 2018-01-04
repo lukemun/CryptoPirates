@@ -27,11 +27,11 @@ class TransactorThread(threading.Thread):
 				if (action == 1 and not self.holding):
 					utils.write("buying")
 					utils.sendMsg("buying")
-					utils.write(self.buy())
+					utils.sendMsg(str(self.buy()))
 				elif (action == -1 and self.holding):
 					utils.write("selling")
 					utils.sendMsg("selling")
-					utils.write(self.sell())
+					utils.sendMsg(str(self.sell()))
 				else:
 					utils.write('No action')
 			except queue.Empty:
