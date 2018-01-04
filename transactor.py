@@ -3,6 +3,7 @@ import queue
 import poloniex
 import pandas as pd
 import utils
+import json
 
 class TransactorThread(threading.Thread):
 	"""TransactorThread, polls queue for actions.
@@ -27,11 +28,15 @@ class TransactorThread(threading.Thread):
 				if (action == 1 and not self.holding):
 					utils.write("buying")
 					utils.sendMsg("buying")
-					utils.sendMsg(str(self.buy()))
+					ret_val = self.buy()
+					utils.write(ret_val)
+					utils.sendMsg(parseTradeReturn(ret_val))
 				elif (action == -1 and self.holding):
 					utils.write("selling")
 					utils.sendMsg("selling")
-					utils.sendMsg(str(self.sell()))
+					ret_val = self.sell()
+					utils.write(ret_val)
+					utils.sendMsg(parseTradeReturn(ret_val))
 				else:
 					utils.write('No action')
 			except queue.Empty:
@@ -51,7 +56,7 @@ class TransactorThread(threading.Thread):
 	    btc_price = getWeightedAvg(asks)
 	    # calc volume of btc we can buy with current usdt
 	    # sell less so we are gauranteed enough balance
-	    volume = wallet["USDT"]["btcValue"] * 0.95
+	    volume = wallet["USDT"]["btcValue"] * 0.98
 	    ret_val = self.polo.buy("USDT_BTC", btc_price, volume)
 	    self.holding = True
 	    return ret_val
@@ -78,9 +83,15 @@ def getWeightedAvg(df):
     weight = df["price"] * df["volume"]
     return weight.sum()/tot_vol
 
+def parseTradeReturn(ret_val):
+	trade_stats = ret_val['resultingTrades'][0]
+	ret_msg = "%s %s btc at %s" % (trade_stats['type'], trade_stats['amount'], trade_stats['rate'])
+	return ret_msg
+
 
 # unused
 def exchangeAvgDiff(asks, bids):
     askAvg = weighted_avg(asks)
     bidAvg = weighted_avg(bids)
     return (askAvg - bidAvg)/bidAvg
+
