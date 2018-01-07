@@ -23,7 +23,7 @@ class TransactorThread(threading.Thread):
 		while not self.stoprequest.isSet():
 			try:
 				action = self.trans_q.get(True)
-				utils.write("obtained value")
+				# utils.write("obtained value")
 				if (action == 1 and not self.holding):
 					utils.write("buying")
 					utils.sendMsg("buying")
@@ -36,10 +36,7 @@ class TransactorThread(threading.Thread):
 					ret_val = self.sell()
 					utils.write(ret_val)
 					utils.sendMsg(parseTradeReturn(ret_val))
-				else:
-					utils.write('No action')
 			except queue.Empty:
-				utils.write("empty")
 				continue
 
 
@@ -86,11 +83,3 @@ def parseTradeReturn(ret_val):
 	trade_stats = ret_val['resultingTrades'][0]
 	ret_msg = "%s %s btc at %s" % (trade_stats['type'], trade_stats['amount'], trade_stats['rate'])
 	return ret_msg
-
-
-# unused
-def exchangeAvgDiff(asks, bids):
-    askAvg = weighted_avg(asks)
-    bidAvg = weighted_avg(bids)
-    return (askAvg - bidAvg)/bidAvg
-

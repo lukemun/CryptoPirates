@@ -3,6 +3,7 @@ import utils
 import poloniex
 from collections import deque
 import numpy as np
+import datetime
 
 class Analysis(object):
 	"""analysis object! stores and processes crypto data
@@ -39,18 +40,26 @@ class Analysis(object):
 	def getDeq(self):
 		return self.deq
 
+
+# analysis functions
+
 def moving_avgs(deq):
 	"""
-
 	Takes in a deque of 500 data points
 	Returns either Buy, Sell, or Hold
-
 	"""
-	d = pd.DataFrame(list(deq))['weightedAverage'].astype(float)
+
+	dat = pd.DataFrame(list(deq))
+	d = dat['weightedAverage'].astype(float)
 	deque_length = len(d)
 	lma = np.mean(d)
 	sma_start = int(4 * deque_length / 5)
 	sma = np.mean(d[sma_start:])
+	date = datetime.datetime.fromtimestamp(
+			int(dat.iloc[len(dat)-1]['date'])).strftime('%Y-%m-%d %H:%M:%S')
+	
+	utils.write(date)
+	utils.write(str(lma) + "," + str(sma))
 
 	if (sma - lma) / lma > 0.01:
 		return 1
