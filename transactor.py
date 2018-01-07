@@ -29,13 +29,13 @@ class TransactorThread(threading.Thread):
 					utils.sendMsg("buying")
 					ret_val = self.buy()
 					utils.write(ret_val)
-					utils.sendMsg(parseTradeReturn(ret_val))
+					utils.sendMsg(ret_val)
 				elif (action == -1 and self.holding):
 					utils.write("selling")
 					utils.sendMsg("selling")
 					ret_val = self.sell()
 					utils.write(ret_val)
-					utils.sendMsg(parseTradeReturn(ret_val))
+					utils.sendMsg(ret_val)
 			except queue.Empty:
 				continue
 
@@ -78,8 +78,3 @@ def getWeightedAvg(df):
     tot_vol = df["volume"].sum()
     weight = df["price"] * df["volume"]
     return weight.sum()/tot_vol
-
-def parseTradeReturn(ret_val):
-	trade_stats = ret_val['resultingTrades'][0]
-	ret_msg = "%s %s btc at %s" % (trade_stats['type'], trade_stats['amount'], trade_stats['rate'])
-	return ret_msg
